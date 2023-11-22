@@ -2,7 +2,6 @@ package me.dio.credit.application.system.dto
 
 import me.dio.credit.application.system.entity.Address
 import me.dio.credit.application.system.entity.Customer
-import org.yaml.snakeyaml.tokens.StreamEndToken
 import java.math.BigDecimal
 
 data class CustomerDto(
