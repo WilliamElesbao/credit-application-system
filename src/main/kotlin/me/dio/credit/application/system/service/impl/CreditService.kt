@@ -4,6 +4,7 @@ import me.dio.credit.application.system.entity.Credit
 import me.dio.credit.application.system.repository.CreditRepository
 import me.dio.credit.application.system.service.ICreditService
 import org.springframework.stereotype.Service
+import java.lang.RuntimeException
 import java.util.*
 
 @Service
@@ -23,7 +24,16 @@ class CreditService(
         TODO("Not yet implemented")
     }
 
-    override fun findByCreditCode(creditCode: UUID): Credit {
-        TODO("Not yet implemented")
+    override fun findByCreditCode(customerId: Long, creditCode: UUID): Credit {
+        val credit: Credit = (this.creditRepository.findByCreditCode(creditCode)
+            ?: throw RuntimeException("CreditCode $creditCode not found"))
+        return if(credit.customer?.id == customerId) credit else throw RuntimeException("Contact admin")
+        /*
+        if (credit.customer?.id == customerId) {
+            return credit
+        } else {
+            throw RuntimeException("Contact admin")
+        }
+        */
     }
 }
