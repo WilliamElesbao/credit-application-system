@@ -100,7 +100,26 @@ class CustomerResourceTest {
             .andDo(MockMvcResultHandlers.print())
         //then
     }
+@Test
+fun `should find customer by id and return 200 status`(){
+    //given
+    val customer: Customer = customerRepository.save(buildCustomerDto().toEntity())
 
+    //when
+    //then
+
+    mockMvc.perform(MockMvcRequestBuilders.get("$URL/${customer.id}")
+        .accept(MediaType.APPLICATION_JSON))
+        .andExpect(MockMvcResultMatchers.status().isOk)
+        .andExpect(MockMvcResultMatchers.jsonPath("$.firstName").value("William"))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.lastName").value("Elesbão"))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.cpf").value("05882648068"))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.email").value("william@email.com"))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.zipCode").value("91030380"))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.street").value("rua do william"))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1))
+        .andDo(MockMvcResultHandlers.print())
+}
     private fun buildCustomerDto(
         firstName: String = "William",
         lastName: String = "Elesbão",
