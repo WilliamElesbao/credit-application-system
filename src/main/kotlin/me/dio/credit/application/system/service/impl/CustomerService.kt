@@ -5,7 +5,6 @@ import me.dio.credit.application.system.exception.BusinessException
 import me.dio.credit.application.system.repository.CustomerRepository
 import me.dio.credit.application.system.service.ICustomerService
 import org.springframework.stereotype.Service
-import java.lang.RuntimeException
 
 @Service
 class CustomerService(
