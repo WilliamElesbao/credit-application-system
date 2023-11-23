@@ -2,7 +2,7 @@ package me.dio.credit.application.system.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import me.dio.credit.application.system.dto.CustomerDto
-import me.dio.credit.application.system.entity.Address
+import me.dio.credit.application.system.dto.CustomerUpdateDto
 import me.dio.credit.application.system.entity.Customer
 import me.dio.credit.application.system.repository.CustomerRepository
 import org.junit.jupiter.api.AfterEach
@@ -19,7 +19,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import java.math.BigDecimal
-import java.util.Random
+import java.util.*
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -53,6 +53,7 @@ class CustomerResourceTest {
             .andExpect(MockMvcResultMatchers.jsonPath("$.lastName").value("Elesbão"))
             .andExpect(MockMvcResultMatchers.jsonPath("$.cpf").value("05882648068"))
             .andExpect(MockMvcResultMatchers.jsonPath("$.email").value("william@email.com"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.income").value("1000.00"))
             .andExpect(MockMvcResultMatchers.jsonPath("$.zipCode").value("91030380"))
             .andExpect(MockMvcResultMatchers.jsonPath("$.street").value("rua do william"))
             .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1))
@@ -101,8 +102,8 @@ class CustomerResourceTest {
             .andDo(MockMvcResultHandlers.print())
         //then
     }
-@Test
-fun `should find customer by id and return 200 status`(){
+    @Test
+    fun `should find customer by id and return 200 status`(){
     //given
     val customer: Customer = customerRepository.save(buildCustomerDto().toEntity())
 
@@ -116,6 +117,7 @@ fun `should find customer by id and return 200 status`(){
         .andExpect(MockMvcResultMatchers.jsonPath("$.lastName").value("Elesbão"))
         .andExpect(MockMvcResultMatchers.jsonPath("$.cpf").value("05882648068"))
         .andExpect(MockMvcResultMatchers.jsonPath("$.email").value("william@email.com"))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.income").value("1000.00"))
         .andExpect(MockMvcResultMatchers.jsonPath("$.zipCode").value("91030380"))
         .andExpect(MockMvcResultMatchers.jsonPath("$.street").value("rua do william"))
         .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1))
@@ -170,6 +172,31 @@ fun `should find customer by id and return 200 status`(){
             .andDo(MockMvcResultHandlers.print())
     }
 
+    @Test
+    fun `should update a customer and return 200`(){
+        //given
+        val customer: Customer = customerRepository.save(buildCustomerDto().toEntity())
+        val customerUpdateDto: CustomerUpdateDto = builderCustomerUpdateDto()
+        val valueAsString: String = objectMapper.writeValueAsString(customerUpdateDto)
+
+        //when
+        //then
+        mockMvc.perform(MockMvcRequestBuilders.patch("$URL?customerId=${customer.id}")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(valueAsString))
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.jsonPath("$.firstName").value("Andressa Silvestre"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.lastName").value("Arruda"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.cpf").value("05882648068"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.email").value("william@email.com"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.income").value("5000.0"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.zipCode").value("91030380"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.street").value("rua da andressa"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1))
+            .andDo(MockMvcResultHandlers.print())
+    }
+
+
     private fun buildCustomerDto(
         firstName: String = "William",
         lastName: String = "Elesbão",
@@ -188,5 +215,19 @@ fun `should find customer by id and return 200 status`(){
         password = password,
         zipCode = zipCode,
         street = street
+    )
+
+    private fun builderCustomerUpdateDto(
+        firstName: String = "Andressa Silvestre",
+        lastName: String = "Arruda",
+        income: BigDecimal = BigDecimal.valueOf(5000.0),
+        zipCode: String = "91030380",
+        street: String = "rua da andressa"
+    ): CustomerUpdateDto = CustomerUpdateDto(
+            firstName = firstName,
+            lastName = lastName,
+            income = income,
+            zipCode = zipCode,
+            street = street
     )
 }
