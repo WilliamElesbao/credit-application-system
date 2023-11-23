@@ -54,6 +54,29 @@ class CustomerResourceTest {
             .andExpect(MockMvcResultMatchers.jsonPath("$.email").value("william@email.com"))
             .andExpect(MockMvcResultMatchers.jsonPath("$.zipCode").value("91030380"))
             .andExpect(MockMvcResultMatchers.jsonPath("$.street").value("rua do william"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1))
+            .andDo(MockMvcResultHandlers.print())
+    }
+
+    @Test
+    fun `should not save a customer with same CPF and return 409 status`(){
+        //given
+        customerRepository.save(buildCustomerDto().toEntity())
+        val customerDto: CustomerDto = buildCustomerDto()
+        val valueAsString: String = objectMapper.writeValueAsString(customerDto)
+
+        //when
+        //then
+        mockMvc.perform(MockMvcRequestBuilders.post(URL)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(valueAsString))
+            .andExpect(MockMvcResultMatchers.status().isConflict)
+            .andExpect(MockMvcResultMatchers.jsonPath("$.title").value("Conflict Request! Consult the documentation"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.timestamp").exists())
+            .andExpect(MockMvcResultMatchers.jsonPath("$.status").value(409))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.exception")
+                .value("class org.springframework.dao.DataIntegrityViolationException"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.details[*]").isNotEmpty)
             .andDo(MockMvcResultHandlers.print())
     }
 
