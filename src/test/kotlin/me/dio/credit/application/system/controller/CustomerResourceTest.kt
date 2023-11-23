@@ -173,7 +173,7 @@ class CustomerResourceTest {
     }
 
     @Test
-    fun `should update a customer and return 200`(){
+    fun `should update a customer and return 200 status`(){
         //given
         val customer: Customer = customerRepository.save(buildCustomerDto().toEntity())
         val customerUpdateDto: CustomerUpdateDto = builderCustomerUpdateDto()
@@ -196,6 +196,29 @@ class CustomerResourceTest {
             .andDo(MockMvcResultHandlers.print())
     }
 
+    @Test
+    fun `should not update a customer with invalid id and return 400 status`(){
+        //given
+        val invalidId: Long = Random().nextLong()
+        val customerUpdateDto: CustomerUpdateDto = builderCustomerUpdateDto()
+        val valueAsString: String = objectMapper.writeValueAsString(customerUpdateDto)
+
+        //when
+        //then
+        mockMvc.perform(MockMvcRequestBuilders.patch("$URL?customerId=$invalidId")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(valueAsString))
+            .andExpect(MockMvcResultMatchers.status().isBadRequest)
+            .andExpect(MockMvcResultMatchers.jsonPath("$.title").value("Bad Request! Consult the documentation"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.timestamp").exists())
+            .andExpect(MockMvcResultMatchers.jsonPath("$.status").value(400))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.exception")
+                .value("class me.dio.credit.application.system.exception.BusinessException"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.details[*]").isNotEmpty)
+            .andDo(MockMvcResultHandlers.print())
+
+
+    }
 
     private fun buildCustomerDto(
         firstName: String = "William",
