@@ -37,7 +37,7 @@ class RestExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT)
             .body(
                 ExceptionDetails(
-                    title = "Conflict Request! Consult the documentation",
+                    title = "Conflict! Consult the documentation",
                     timestamp = LocalDateTime.now(),
                     status = HttpStatus.CONFLICT.value(),
                     exception = ex.javaClass.toString(),

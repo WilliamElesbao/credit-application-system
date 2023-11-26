@@ -73,7 +73,7 @@ class CustomerResourceTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content(valueAsString))
             .andExpect(MockMvcResultMatchers.status().isConflict)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.title").value("Conflict Request! Consult the documentation"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.title").value("Conflict! Consult the documentation"))
             .andExpect(MockMvcResultMatchers.jsonPath("$.timestamp").exists())
             .andExpect(MockMvcResultMatchers.jsonPath("$.status").value(409))
             .andExpect(MockMvcResultMatchers.jsonPath("$.exception")
@@ -185,7 +185,7 @@ class CustomerResourceTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content(valueAsString))
             .andExpect(MockMvcResultMatchers.status().isOk)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.firstName").value("Andressa Silvestre"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.firstName").value(builderCustomerUpdateDto().firstName))
             .andExpect(MockMvcResultMatchers.jsonPath("$.lastName").value("Arruda"))
             .andExpect(MockMvcResultMatchers.jsonPath("$.cpf").value("05882648068"))
             .andExpect(MockMvcResultMatchers.jsonPath("$.email").value("william@email.com"))
@@ -241,7 +241,7 @@ class CustomerResourceTest {
     )
 
     private fun builderCustomerUpdateDto(
-        firstName: String = "Andressa Silvestre",
+        firstName: String = "Andressa",
         lastName: String = "Arruda",
         income: BigDecimal = BigDecimal.valueOf(5000.0),
         zipCode: String = "91030380",
